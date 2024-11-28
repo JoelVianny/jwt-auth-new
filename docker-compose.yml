@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  app:
+    image: auth-system # Replace with your built Spring Boot image
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080" # Map container port 8080 to host port 8080
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/auth
+      SPRING_DATASOURCE_USERNAME: auth
+      SPRING_DATASOURCE_PASSWORD: auth
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    depends_on:
+      - db # Ensures the database starts before the application
+
+  db:
+    image: postgres:15 # Use PostgreSQL version 15
+    container_name: postgres-container
+    restart: always
+    environment:
+      POSTGRES_DB: auth
+      POSTGRES_USER: auth
+      POSTGRES_PASSWORD: auth
+    ports:
+      - "5432:5432" # Map container port 5432 to host port 5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data # Persist database data
+
+volumes:
+  postgres_data:
